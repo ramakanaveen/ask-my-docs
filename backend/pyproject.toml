@@ -31,18 +31,22 @@ python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-dotenv = "^1.0.0"
 
-# AI & LLM
-langchain = "^0.1.4"
-langchain-anthropic = "^0.1.1"
-langchain-openai = "^0.0.5"
-langchain-community = "^0.0.20"
-langgraph = "^0.0.20"
-anthropic = "^0.8.1"
-openai = "^1.10.0"
+# AI & LLM (Primary: Google Vertex AI via LangChain 1.0.x)
+langchain = "^1.0.8"  # Latest LangChain 1.0.x
+langchain-core = "^1.0.7"
+langchain-google-vertexai = "^3.0.3"  # Primary: Vertex AI (service account auth)
+google-cloud-aiplatform = "^1.128.0"  # Vertex AI SDK
+langchain-anthropic = "^1.1.0"  # Optional: Alternative provider
+langchain-openai = "^1.0.3"  # Optional: Alternative provider
+langchain-community = "^1.0.0a1"
+langgraph = "^1.0.3"
+anthropic = "^0.74.1"  # Optional
+openai = "^2.8.1"  # Optional
 
-# Vector Databases
-chromadb = "^0.4.22"
-# pinecone-client = "^3.0.0"  # Uncomment for production
+# Vector Database (PGVector - PostgreSQL extension)
+pgvector = "^0.4.1"
+# chromadb = "^0.4.22"  # Replaced by PGVector
+# pinecone-client = "^3.0.0"  # Optional: For production scaling
 
 # Document Processing
 PyMuPDF = "^1.23.8"

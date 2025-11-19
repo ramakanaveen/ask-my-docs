@@ -15,6 +15,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
+from pgvector.sqlalchemy import Vector
 
 from app.core.database import Base
 
@@ -141,11 +142,9 @@ class DocumentChunk(Base):
     page_number = Column(Integer, nullable=True)
     section_title = Column(String(500), nullable=True)
 
-    # Vector DB reference
-    vector_db_id = Column(String(255), nullable=True, index=True)
-
-    # Embedding info
+    # Embedding info (PGVector - stored directly in PostgreSQL)
     embedding_model = Column(String(100), default="text-embedding-3-small")
+    embedding = Column(Vector(1536))  # OpenAI embeddings are 1536 dimensions
     embedded_at = Column(DateTime, nullable=True)
 
     # Timestamp

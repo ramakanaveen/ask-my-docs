@@ -38,22 +38,39 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
-    # LLM Configuration
-    ANTHROPIC_API_KEY: str
+    # LLM Configuration (Primary: Google Vertex AI)
+    # Google Cloud service account credentials
+    GOOGLE_CREDENTIALS_PATH: str  # Path to service account JSON file
+    GOOGLE_PROJECT_ID: str  # GCP project ID
+    GOOGLE_LOCATION: str = "us-central1"  # Vertex AI location for LLM
+    GOOGLE_EMBEDDING_LOCATION: str = "us-central1"  # Vertex AI location for embeddings
+
+    # Optional: Alternative providers
+    ANTHROPIC_API_KEY: str | None = None
     OPENAI_API_KEY: str | None = None
-    GOOGLE_API_KEY: str | None = None
 
-    DEFAULT_MODEL: str = "claude-sonnet-4"
-    SIMPLE_QUERY_MODEL: str = "claude-haiku"
-    COMPLEX_QUERY_MODEL: str = "claude-sonnet-4"
-    EMBEDDING_MODEL: str = "text-embedding-3-small"
+    # Model Selection - Vertex AI models
+    LLM_PROVIDER: str = "google"  # google, anthropic, or openai
+    GEMINI_MODEL_NAME: str = "gemini-2.5-pro"  # Default Vertex AI model
+    DEFAULT_MODEL: str = "gemini-2.5-pro"
+    SIMPLE_QUERY_MODEL: str = "gemini-2.0-flash-001"  # Fast model for simple queries
+    COMPLEX_QUERY_MODEL: str = "gemini-2.5-pro"  # Advanced model for complex queries
 
-    # Vector Database
-    VECTOR_DB_TYPE: Literal["chromadb", "pinecone"] = "chromadb"
+    # Model parameters
+    GEMINI_TEMPERATURE: float = 0.2
+    GEMINI_TOP_P: float = 0.95
 
-    # ChromaDB
-    CHROMA_PERSIST_DIRECTORY: str = "./data/chroma"
-    CHROMA_COLLECTION_NAME: str = "document_chunks"
+    # Embedding configuration
+    GOOGLE_EMBEDDING_MODEL_NAME: str = "text-embedding-005"  # Vertex AI embedding model
+    EMBEDDING_MODEL: str = "text-embedding-005"  # Alias for backward compatibility
+    EMBEDDING_PROVIDER: str = "google"  # google or openai
+
+    # Vector Database (Using PGVector - embeddings stored directly in PostgreSQL)
+    VECTOR_DB_TYPE: Literal["pgvector", "chromadb", "pinecone"] = "pgvector"
+
+    # ChromaDB (Not used - replaced by PGVector)
+    # CHROMA_PERSIST_DIRECTORY: str = "./data/chroma"
+    # CHROMA_COLLECTION_NAME: str = "document_chunks"
 
     # Pinecone (Optional)
     PINECONE_API_KEY: str | None = None
@@ -128,14 +145,6 @@ class Settings(BaseSettings):
     # Development
     SEED_DATABASE: bool = False
     ENABLE_DOCS: bool = True
-
-    @field_validator("ALLOWED_ORIGINS", "ALLOWED_FILE_TYPES", mode="before")
-    @classmethod
-    def split_str_to_list(cls, v: str | List[str]) -> List[str]:
-        """Convert comma-separated string to list."""
-        if isinstance(v, str):
-            return [item.strip() for item in v.split(",")]
-        return v
 
     @property
     def allowed_file_types_list(self) -> List[str]:
